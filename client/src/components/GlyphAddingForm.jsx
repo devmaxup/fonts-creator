@@ -13,7 +13,7 @@ export default ({ onSubmit }) => {
     <Form className="align-middle" onSubmit={onSubmit}>
       <FormGroup>
         <Label for="code">
-          JavaScript Glyphs to add code:
+          Glyphs to add as JavaScript code:
         </Label>
         <Input type="textarea" name="code" id="code" />
 

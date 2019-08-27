@@ -5,19 +5,23 @@ import {
   FormGroup,
   Input,
 } from 'reactstrap';
+import { FONT_OUTPUT_FORMATS, DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME } from '../constants';
 
-export default () => (
-  <Form className="p-3" inline>
+export default ({ onSubmit }) => (
+  <Form className="p-3" inline onSubmit={onSubmit}>
     <FormGroup className="mr-3">
-      <Input type="text" name="select" id="fontName" placeholder="Font Name"/>
+      <Input type="text" name="fontName" id="fontName" placeholder="Font Name" title={`default is "${ DEFAULT_FONT_NAME }"`} />
     </FormGroup>
 
     <FormGroup className="mr-3">
-      <Input type="select" name="outputFormat" id="outputFormat" defaultValue="ttf">
-        <option value="ttf">ttf</option>
-        <option value="woff">woff</option>
-        <option value="svg">svg</option>
-        <option value="eot">eot</option>
+      <Input type="text" name="styleName" id="styleName" placeholder="Font style" title={`default is "${ DEFAULT_STYLE_NAME }"`} />
+    </FormGroup>
+
+    <FormGroup className="mr-3">
+      <Input type="select" name="outputFormat" id="outputFormat" defaultValue={FONT_OUTPUT_FORMATS.OTF}>
+        {Object.values(FONT_OUTPUT_FORMATS).map((format) => (
+          <option key={format} value={format}>{format}</option>
+        ))}
       </Input>
     </FormGroup>
 

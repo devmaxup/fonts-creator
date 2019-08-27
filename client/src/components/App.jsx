@@ -7,7 +7,9 @@ import {
   CardBody,
 } from 'reactstrap';
 import * as opentype from "opentype.js";
+import { Font as FontEditorFont } from "fonteditor-core";
 
+import { DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME } from '../constants';
 import DownloadFontForm from './DownloadFontForm';
 import GlyphAddingForm from './GlyphAddingForm';
 import Glyph from './Glyph';
@@ -85,14 +87,43 @@ const mergeGlyphs = (glyphs, glyphsToAdd) => {
   return resultGlyphs;
 };
 
-// const font = new opentype.Font({
-//   familyName: 'TempFont',
-//   styleName: "Medium",
-//   unitsPerEm: 1000,
-//   ascender: 800,
-//   descender: -200,
-//   glyphs: [notdefGlyph, aGlyph, bGlyph]
-// });
+const createFont = (glyphs, familyName, styleName) => {
+  return new opentype.Font({
+    familyName,
+    styleName,
+    unitsPerEm: 1000,
+    ascender: 800,
+    descender: -200,
+    glyphs
+  });
+};
+
+const convertAndDownloadFont = (openTypeFont, type, filename) => {
+  const font = FontEditorFont.create(openTypeFont.toArrayBuffer(), {
+    type: 'otf',
+    hinting: true, // save font hinting
+    compound2simple: true, // transform ttf compound glyph to simple
+    inflate: null, // inflate function for woff
+    combinePath: false // for svg path
+  });
+
+  const resultArrayBuffer = font.write({
+    type, // support ttf, woff, eot, svg
+    hinting: true, // save font hinting
+    deflate: null // deflate function for woff
+  });
+
+  const blob = new Blob([resultArrayBuffer]);
+  const a = document.createElement("a");
+  document.body.appendChild(a);
+
+  const url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.download = filename + "." + type;
+  a.click();
+  window.URL.revokeObjectURL(url);
+};
+
 
 export default () => {
   const [glyphs, setGlyphs] = useState([notdefGlyph, aGlyph, bGlyph]);
@@ -107,6 +138,22 @@ export default () => {
     setGlyphs((glyphs) => mergeGlyphs(glyphs, glyphsToAdd));
   }, []);
 
+  const downloadFont = useCallback((e) => {
+    e.preventDefault();
+    const fontName = e.target.fontName.value || DEFAULT_FONT_NAME;
+    const styleName = e.target.styleName.value || DEFAULT_STYLE_NAME;
+    const outputFormat = e.target.outputFormat.options[e.target.outputFormat.selectedIndex].value;
+
+    const font = createFont(glyphs, fontName, styleName);
+    if (outputFormat === 'otf') {
+      font.download();
+      return;
+    }
+
+    const filename = font.names.fullName.en || Object.values(font.names.fullName)[0];
+    convertAndDownloadFont(font, outputFormat, filename)
+  }, [glyphs]);
+
   return (
     <Container className="mt-5">
       <Row className="justify-content-center">
@@ -115,7 +162,7 @@ export default () => {
             Create your font
           </h1>
 
-          <DownloadFontForm />
+          <DownloadFontForm onSubmit={downloadFont} />
         </Col>
       </Row>
       <Row className="mt-3">
