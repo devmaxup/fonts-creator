@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button, Form, FormGroup, FormText, Label, Input } from 'reactstrap';
 
-export default () => {
+export default (callback, inputs) => {
   const [isExampleVisible, setIsExampleVisibility] = useState(false);
-  const toggleExampleVisibility = () => setIsExampleVisibility((isExampleVisible) => !isExampleVisible);
+  const toggleExampleVisibility = useCallback(
+    () => setIsExampleVisibility((isExampleVisible) => !isExampleVisible),
+    []
+  );
 
   return (
     <Form className="align-middle">
       <FormGroup>
         <Label for="exampleText">
-          JavaScript Glyphs code:
+          JavaScript Glyphs to add code:
         </Label>
         <Input type="textarea" name="text" id="exampleText" />
 
