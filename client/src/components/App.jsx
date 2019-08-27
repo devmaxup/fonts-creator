@@ -69,22 +69,42 @@ const bGlyph = new opentype.Glyph({
   path: bPath
 });
 
-const font = new opentype.Font({
-  familyName: 'TempFont',
-  styleName: "Medium",
-  unitsPerEm: 1000,
-  ascender: 800,
-  descender: -200,
-  glyphs: [notdefGlyph, aGlyph, bGlyph]
-});
+const mergeGlyphs = (glyphs, glyphsToAdd) => {
+  const resultGlyphs = [...glyphs];
+
+  glyphsToAdd.forEach((glyphToAdd) => {
+    const existedGlyphIndex = glyphs.findIndex(({ name }) => name === glyphToAdd.name);
+
+    if (existedGlyphIndex === -1) {
+      resultGlyphs.push(glyphToAdd);
+      return;
+    }
+    resultGlyphs[existedGlyphIndex] = glyphToAdd;
+  });
+
+  return resultGlyphs;
+};
+
+// const font = new opentype.Font({
+//   familyName: 'TempFont',
+//   styleName: "Medium",
+//   unitsPerEm: 1000,
+//   ascender: 800,
+//   descender: -200,
+//   glyphs: [notdefGlyph, aGlyph, bGlyph]
+// });
 
 export default () => {
-  const [, updateState] = useState({});
-  const forceUpdate = useCallback(() => updateState({}), []);
+  const [glyphs, setGlyphs] = useState([notdefGlyph, aGlyph, bGlyph]);
 
-  const addGlyph = useCallback((glyph) => {
-    font.glyphs.push(glyph);
-    forceUpdate()
+  const addGlyph = useCallback((e) => {
+    e.preventDefault();
+    const glyphsToAdd = eval(e.target.code.value);
+    if (!glyphsToAdd.length) {
+      return;
+    }
+
+    setGlyphs((glyphs) => mergeGlyphs(glyphs, glyphsToAdd));
   }, []);
 
   return (
@@ -106,12 +126,7 @@ export default () => {
 
           <Card className="mb-5">
             <CardBody>
-              {Object.values(font.glyphs.glyphs).map((none, index) => {
-                const glyph = font.glyphs.get(index);
-                return (
-                  <Glyph key={glyph.name} glyph={glyph} />
-                );
-              })}
+              {glyphs.map((glyph) => <Glyph key={glyph.path.toPathData()} glyph={glyph} />)}
             </CardBody>
           </Card>
 

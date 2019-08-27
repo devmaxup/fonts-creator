@@ -21,7 +21,7 @@ export default () => (
       </Input>
     </FormGroup>
 
-    <Button color="primary">
+    <Button color="primary" type="submit">
       Download font
     </Button>
   </Form>
