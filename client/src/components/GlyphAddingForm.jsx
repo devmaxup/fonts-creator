@@ -1,18 +1,21 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Button, Form, FormGroup, FormText, Label, Input } from 'reactstrap';
+import PropTypes from 'prop-types';
+import {
+  Button, Form, FormGroup, FormText, Label, Input,
+} from 'reactstrap';
 
-export default ({ onSubmit }) => {
+const GlyphAddingForm = ({ onSubmit }) => {
   const codeInputRef = useRef(null);
   const [isExampleVisible, setIsExampleVisibility] = useState(false);
   const [hasError, setHasError] = useState(null);
 
   const toggleExampleVisibility = useCallback(
-    () => setIsExampleVisibility((isExampleVisible) => !isExampleVisible),
-    []
+    () => setIsExampleVisibility((isVisible) => !isVisible),
+    [],
   );
   const clearHasError = useCallback(
     () => setHasError(null),
-    []
+    [],
   );
   const validateAndHideExample = useCallback((e) => {
     setIsExampleVisibility(false);
@@ -26,7 +29,7 @@ export default ({ onSubmit }) => {
         e.preventDefault();
         return;
       }
-    } catch {
+    } catch (nothing) {
       setHasError(true);
       e.preventDefault();
       return;
@@ -37,7 +40,7 @@ export default ({ onSubmit }) => {
 
   return (
     <Form className="align-middle" onSubmit={onSubmit}>
-      <FormGroup >
+      <FormGroup>
         <Label for="code">
           Glyphs to add as JavaScript code:
         </Label>
@@ -45,18 +48,28 @@ export default ({ onSubmit }) => {
 
         {isExampleVisible && (
           <FormText color="muted">
-            var aPath = new opentype.Path();<br />
-            aPath.moveTo(100, 0);<br />
-            aPath.lineTo(100, 700);<br />
-            aPath.lineTo(500, 700);<br />
-            aPath.lineTo(500, 400);<br />
+            var aPath = new opentype.Path();
             <br />
-            var aGlyph = new opentype.Glyph({"{ name: 'A', unicode: 65, advanceWidth: 650, path: aPath }"});<br />
+            aPath.moveTo(100, 0);
+            <br />
+            aPath.lineTo(100, 700);
+            <br />
+            aPath.lineTo(500, 700);
+            <br />
+            aPath.lineTo(500, 400);
+            <br />
+            <br />
+            var aGlyph = new opentype.Glyph(
+            {"{ name: 'A', unicode: 65, advanceWidth: 650, path: aPath }"}
+);
+            <br />
             [aGlyph]
           </FormText>
         )}
         <Button color="link" size="sm" onClick={toggleExampleVisibility}>
-          {isExampleVisible ? 'Hide' : 'Show'} example
+          {isExampleVisible ? 'Hide' : 'Show'}
+          {' '}
+          example
         </Button>
       </FormGroup>
 
@@ -64,5 +77,11 @@ export default ({ onSubmit }) => {
         Add to font
       </Button>
     </Form>
-  )
+  );
 };
+
+GlyphAddingForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
+
+export default GlyphAddingForm;

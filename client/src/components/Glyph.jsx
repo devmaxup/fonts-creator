@@ -1,6 +1,10 @@
 import React, { useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import * as opentype from 'opentype.js';
 
-export default ({ glyph, size = 54, fontSize = 48, withPoints, withMetrix, ...rest}) => {
+const Glyph = ({
+  glyph, size = 54, fontSize = 48, withPoints, withMetrix, ...rest
+}) => {
   const canvasRef = useRef(null);
   const x = Math.floor((size - fontSize) / 2);
   const y = Math.floor(fontSize + (size - fontSize) / 2);
@@ -17,3 +21,20 @@ export default ({ glyph, size = 54, fontSize = 48, withPoints, withMetrix, ...re
     <canvas ref={canvasRef} width={size} height={size} title={`${glyph.unicode} "${glyph.name}"`} {...rest} />
   );
 };
+
+Glyph.defaultProps = {
+  size: 54,
+  fontSize: 48,
+  withPoints: false,
+  withMetrix: false,
+};
+
+Glyph.propTypes = {
+  glyph: PropTypes.instanceOf(opentype.Glyph).isRequired,
+  size: PropTypes.number,
+  fontSize: PropTypes.number,
+  withPoints: PropTypes.bool,
+  withMetrix: PropTypes.bool,
+};
+
+export default Glyph;

@@ -7,7 +7,7 @@ router.get(
   createResponse((req, respond) => Glyph.paginate(
     {},
     { page: req.query.page || 1, limit: req.query.limit || 40 },
-    respond
+    respond,
   )),
 );
 

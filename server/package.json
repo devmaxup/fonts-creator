@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon ./app",
-    "start": "node ./app"
+    "start": "node ./app",
+    "lint": "eslint ./"
   },
   "eslintConfig": {
     "env": {
@@ -38,6 +39,10 @@
     "response-time": "^2.3.2"
   },
   "devDependencies": {
+    "babel-eslint": "10.0.2",
+    "eslint": "6.1.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3",
     "nodemon": "^1.18.11"
   }
 }

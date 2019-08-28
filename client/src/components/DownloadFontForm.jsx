@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   Form,
@@ -7,14 +8,14 @@ import {
 } from 'reactstrap';
 import { FONT_OUTPUT_FORMATS, DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME } from '../constants';
 
-export default ({ onSubmit }) => (
+const DownloadFontForm = ({ onSubmit }) => (
   <Form className="p-3" inline onSubmit={onSubmit}>
     <FormGroup className="mr-3">
-      <Input type="text" name="fontName" id="fontName" placeholder="Font Name" title={`default is "${ DEFAULT_FONT_NAME }"`} />
+      <Input type="text" name="fontName" id="fontName" placeholder="Font Name" title={`default is "${DEFAULT_FONT_NAME}"`} />
     </FormGroup>
 
     <FormGroup className="mr-3">
-      <Input type="text" name="styleName" id="styleName" placeholder="Font style" title={`default is "${ DEFAULT_STYLE_NAME }"`} />
+      <Input type="text" name="styleName" id="styleName" placeholder="Font style" title={`default is "${DEFAULT_STYLE_NAME}"`} />
     </FormGroup>
 
     <FormGroup className="mr-3">
@@ -30,3 +31,9 @@ export default ({ onSubmit }) => (
     </Button>
   </Form>
 );
+
+DownloadFontForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
+
+export default DownloadFontForm;

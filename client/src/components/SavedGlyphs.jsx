@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   Pagination,
   PaginationItem,
@@ -6,20 +7,19 @@ import {
   Card,
   CardBody,
 } from 'reactstrap';
-import * as opentype from "opentype.js";
-import axios from "axios";
+import * as opentype from 'opentype.js';
+import axios from 'axios';
 
 import { API_URLS } from '../constants';
 import Glyph from './Glyph';
 
-const fetchGlyphs = (page = 1) =>
-  axios.get(API_URLS.GYPHS, {
-    params: {
-      page
-    }
-  });
+const fetchGlyphs = (page = 1) => axios.get(API_URLS.GYPHS, {
+  params: {
+    page,
+  },
+});
 
-const createGlyphFromPathData = (glyphData) =>{
+const createGlyphFromPathData = (glyphData) => {
   const path = new opentype.Path();
   const pathDataList = glyphData.pathData
     .replace(/([A-Z])/g, ';$1')
@@ -32,22 +32,22 @@ const createGlyphFromPathData = (glyphData) =>{
 
     switch (command) {
       case 'M':
-        path.moveTo.apply(path, args);
+        path.moveTo(...args);
         return;
       case 'L':
-        path.lineTo.apply(path, args);
+        path.lineTo(...args);
         break;
       case 'Q':
-        path.quadTo.apply(path, args);
+        path.quadTo(...args);
         break;
       case 'C':
-        path.curveTo.apply(path, args);
+        path.curveTo(...args);
         break;
       case 'Z':
-        path.close.apply(path, args);
+        path.close(...args);
         break;
       default:
-        throw new Error('Unexpected path command ' + pathData);
+        throw new Error(`Unexpected path command ${pathData}`);
     }
   });
 
@@ -56,7 +56,7 @@ const createGlyphFromPathData = (glyphData) =>{
     name: glyphData.name,
     unicode: glyphData.unicode,
     advanceWidth: glyphData.advanceWidth || 650,
-    path
+    path,
   });
   glyph._id = glyphData.id;
 
@@ -64,14 +64,14 @@ const createGlyphFromPathData = (glyphData) =>{
 };
 
 
-export default ({ onGlyphClick }) => {
+const SavedGlyphs = ({ onGlyphClick }) => {
   const [glyphs, setGlyphs] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
 
   const callOnGlyphClick = useCallback((e) => {
     e.preventDefault();
-    const id = e.currentTarget.dataset.id;
+    const { id } = e.currentTarget.dataset;
     const glyph = glyphs.find(({ _id }) => _id === id);
 
     onGlyphClick(glyph);
@@ -79,8 +79,7 @@ export default ({ onGlyphClick }) => {
 
   const changePage = useCallback((e) => {
     e.preventDefault();
-    const page = +e.currentTarget.dataset.page;
-    setPage(page);
+    setPage(+e.currentTarget.dataset.page);
   }, []);
 
   useEffect(() => {
@@ -89,8 +88,8 @@ export default ({ onGlyphClick }) => {
         const newGlyphs = response.data.data.docs.map(createGlyphFromPathData);
         setGlyphs(newGlyphs);
         setTotalPages(response.data.data.pages);
-      })
-    }, [page]);
+      });
+  }, [page]);
 
   return (
     <>
@@ -122,3 +121,9 @@ export default ({ onGlyphClick }) => {
     </>
   );
 };
+
+SavedGlyphs.propTypes = {
+  onGlyphClick: PropTypes.func.isRequired,
+};
+
+export default SavedGlyphs;

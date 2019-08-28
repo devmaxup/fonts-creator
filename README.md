@@ -37,3 +37,7 @@ You will also see any lint errors in the console.
 
 ### `yarn build`
 Compiles and minifies for production
+
+
+### `yarn lint`
+Verify code style
