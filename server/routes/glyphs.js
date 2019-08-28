@@ -16,6 +16,7 @@ router.post(
   createResponse((req, respond) => Glyph.create({
     name: req.body.name,
     unicode: req.body.unicode,
+    advanceWidth: req.body.advanceWidth,
     pathData: req.body.pathData,
   }, respond)),
 );

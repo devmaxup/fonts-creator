@@ -40,6 +40,7 @@ const saveGlyph = (glyph) =>
   axios.post(API_URLS.GYPHS, {
     name: glyph.name,
     unicode: glyph.unicode,
+    advanceWidth: glyph.advanceWidth,
     pathData: glyph.path.toPathData(),
   });
 

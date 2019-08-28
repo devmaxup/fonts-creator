@@ -10,6 +10,9 @@ const schema = new mongoose.Schema(
     unicode: {
       type: Number,
     },
+    advanceWidth: {
+      type: Number,
+    },
     pathData: {
       type: String,
       required: true,
