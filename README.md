@@ -1,52 +1,39 @@
-# take-day-off
-
-## TODOs
-
-1. ~~Request vacation popup - 4h~~
-1. ~~Request approve - 2h~~
-1. ~~Request decline - 2h~~
-1. ~~Users vacations list - 2h~~
-1. ~~Decrease available days on vacation creation and give it back on reject - 2h~~
-1. ~~Company adding on registration ? - 2h~~
-1. ~~User inviting - 2h~~
-1. Vacation days autoincrement - 2h
-1. Rule adding - 4h
-------
-1. User settings - 2h
-1. Users vacations infinit scroll - 4h
-1. Users vacations calendar/timeline - 2h
-1. Send invite - 4h
-1. Proceed invite - 2h
-1. Logout - 2h
-1. Add bonus - 2h
-1. User vacations infinit scroll - 2h
-1. Single user vacations list - 2h
-1. Single user vacations calendar/timeline - 2h
-1. Users vacations filtering - 2h
-1. User vacations filtering - 2h
-1. Single user vacations filtering - 2h
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Project setup
-```
+
+1. Install NodeJS (above the 8 version is recommended)
+https://nodejs.org/en/download/package-manager/
+
+1. Install MongoDB
+https://docs.mongodb.com/manual/administration/install-community/
+and create `fonts-creator` database
+
+1. Open terminal in a current directory and put commands here
+```bash
+npm install -g yarn
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn run dev
-```
+1. Now you are able to start development with `yarn dev`
 
-### Compiles and minifies for production
-```
-yarn run build
-```
 
-### Run production
-```
-yarn run start
-```
+## Available Scripts
 
-### Lints and fixes files
-```
-yarn run lint
-```
+In the project directory, you can run:
+
+### `yarn install`
+Will setup all dependencies for front-end and back-enf
+
+
+### `yarn dev`
+
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
+
+
+### `yarn build`
+Compiles and minifies for production
