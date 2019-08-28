@@ -15,7 +15,7 @@ export default ({ onSubmit }) => {
         <Label for="code">
           Glyphs to add as JavaScript code:
         </Label>
-        <Input type="textarea" name="code" id="code" />
+        <Input type="textarea" name="code" id="code" rows={10} />
 
         {isExampleVisible && (
           <FormText color="muted">
