@@ -3,13 +3,16 @@ const mongoosePaginate = require('mongoose-paginate');
 
 const schema = new mongoose.Schema(
   {
-    symbol: {
+    name: {
       type: String,
       required: true,
     },
-    data: {
-      type: Map,
-      of: Array
+    unicode: {
+      type: Number,
+    },
+    pathData: {
+      type: String,
+      required: true,
     },
   },
   {

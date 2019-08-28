@@ -8,8 +8,9 @@ import {
 } from 'reactstrap';
 import * as opentype from "opentype.js";
 import { Font as FontEditorFont } from "fonteditor-core";
+import axios from "axios";
 
-import { DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME } from '../constants';
+import { DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME, API_URLS } from '../constants';
 import DownloadFontForm from './DownloadFontForm';
 import GlyphAddingForm from './GlyphAddingForm';
 import Glyph from './Glyph';
@@ -75,7 +76,11 @@ const mergeGlyphs = (glyphs, glyphsToAdd) => {
   const resultGlyphs = [...glyphs];
 
   glyphsToAdd.forEach((glyphToAdd) => {
-    const existedGlyphIndex = glyphs.findIndex(({ name }) => name === glyphToAdd.name);
+    const existedGlyphIndex = glyphs.findIndex(
+      glyphToAdd.unicode
+        ? ({ unicode }) => unicode === glyphToAdd.unicode
+        : ({ name }) => name === glyphToAdd.name
+    );
 
     if (existedGlyphIndex === -1) {
       resultGlyphs.push(glyphToAdd);
@@ -86,6 +91,13 @@ const mergeGlyphs = (glyphs, glyphsToAdd) => {
 
   return resultGlyphs;
 };
+
+const saveGlyph = (glyph) =>
+  axios.post(API_URLS.GYPHS, {
+    name: glyph.name,
+    unicode: glyph.unicode,
+    pathData: glyph.path.toPathData(),
+  });
 
 const createFont = (glyphs, familyName, styleName) => {
   return new opentype.Font({
@@ -128,13 +140,14 @@ const convertAndDownloadFont = (openTypeFont, type, filename) => {
 export default () => {
   const [glyphs, setGlyphs] = useState([notdefGlyph, aGlyph, bGlyph]);
 
-  const addGlyph = useCallback((e) => {
+  const addAndSaveGlyphs = useCallback((e) => {
     e.preventDefault();
     const glyphsToAdd = eval(e.target.code.value);
     if (!glyphsToAdd.length) {
       return;
     }
 
+    glyphsToAdd.forEach(saveGlyph);
     setGlyphs((glyphs) => mergeGlyphs(glyphs, glyphsToAdd));
   }, []);
 
@@ -153,6 +166,7 @@ export default () => {
     const filename = font.names.fullName.en || Object.values(font.names.fullName)[0];
     convertAndDownloadFont(font, outputFormat, filename)
   }, [glyphs]);
+
 
   return (
     <Container className="mt-5">
@@ -173,11 +187,13 @@ export default () => {
 
           <Card className="mb-5">
             <CardBody>
-              {glyphs.map((glyph) => <Glyph key={glyph.path.toPathData()} glyph={glyph} />)}
+              {glyphs.map((glyph) => (
+                <Glyph key={glyph.unicode || glyph.name} glyph={console.log(glyph) || glyph} />
+              ))}
             </CardBody>
           </Card>
 
-          <GlyphAddingForm onSubmit={addGlyph}/>
+          <GlyphAddingForm onSubmit={addAndSaveGlyphs}/>
 
         </Col>
         <Col xs={6}>

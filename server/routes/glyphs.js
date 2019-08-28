@@ -6,7 +6,7 @@ router.get(
   '/',
   createResponse((req, respond) => Glyph.paginate(
     {},
-    { page: req.query.page, limit: req.query.limit },
+    { page: req.query.page || 1, limit: req.query.limit || 40 },
     respond
   )),
 );
@@ -14,8 +14,9 @@ router.get(
 router.post(
   '/',
   createResponse((req, respond) => Glyph.create({
-    symbol: req.body.symbol,
-    data: req.body.data,
+    name: req.body.name,
+    unicode: req.body.unicode,
+    pathData: req.body.pathData,
   }, respond)),
 );
 

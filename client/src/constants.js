@@ -7,3 +7,8 @@ export const FONT_OUTPUT_FORMATS = {
   SVG: 'svg',
   EOT: 'eot',
 };
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+export const API_URLS = {
+  GYPHS: API_URL + '/glyphs/'
+};
