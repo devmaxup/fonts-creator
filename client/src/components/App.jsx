@@ -82,6 +82,7 @@ const convertAndDownloadFont = (openTypeFont, type, filename) => {
 
 
 export default () => {
+  const [savedGlyphsVersion, setSavedGlyphsVersion] = useState(0);
   const [glyphs, setGlyphs] = useState([]);
 
   const addAndSaveGlyphsFromCode = useCallback((e) => {
@@ -91,7 +92,9 @@ export default () => {
       return;
     }
 
-    glyphsToAdd.forEach(saveGlyph);
+    Promise.all(glyphsToAdd.map(saveGlyph)).then(() =>
+      setSavedGlyphsVersion(version => version + 1)
+    );
     setGlyphs((glyphs) => mergeGlyphs(glyphs, glyphsToAdd));
   }, []);
 
@@ -149,7 +152,7 @@ export default () => {
             Saved glyphs:
           </h4>
 
-          <SavedGlyphs onGlyphClick={addGlyph} />
+          <SavedGlyphs key={savedGlyphsVersion} onGlyphClick={addGlyph} />
         </Col>
       </Row>
     </Container>
