@@ -1,21 +1,47 @@
-import React, { useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { Button, Form, FormGroup, FormText, Label, Input } from 'reactstrap';
 
 export default ({ onSubmit }) => {
+  const codeInputRef = useRef(null);
   const [isExampleVisible, setIsExampleVisibility] = useState(false);
+  const [hasError, setHasError] = useState(null);
+
   const toggleExampleVisibility = useCallback(
     () => setIsExampleVisibility((isExampleVisible) => !isExampleVisible),
     []
   );
-  const hideExample = useCallback(() => setIsExampleVisibility(false), []);
+  const clearHasError = useCallback(
+    () => setHasError(null),
+    []
+  );
+  const validateAndHideExample = useCallback((e) => {
+    setIsExampleVisibility(false);
+
+    try {
+      // eslint-disable-next-line no-eval
+      const glyphs = eval(codeInputRef.current.value);
+
+      if (!glyphs.length) {
+        setHasError(true);
+        e.preventDefault();
+        return;
+      }
+    } catch {
+      setHasError(true);
+      e.preventDefault();
+      return;
+    }
+
+    setHasError(false);
+  }, []);
 
   return (
     <Form className="align-middle" onSubmit={onSubmit}>
-      <FormGroup>
+      <FormGroup >
         <Label for="code">
           Glyphs to add as JavaScript code:
         </Label>
-        <Input type="textarea" name="code" id="code" rows={10} />
+        <Input type="textarea" name="code" id="code" rows={10} valid={hasError === false} invalid={hasError === true} onChange={clearHasError} innerRef={codeInputRef} />
 
         {isExampleVisible && (
           <FormText color="muted">
@@ -34,7 +60,7 @@ export default ({ onSubmit }) => {
         </Button>
       </FormGroup>
 
-      <Button color="info" type="submit" onClick={hideExample}>
+      <Button color="info" type="submit" onClick={validateAndHideExample}>
         Add to font
       </Button>
     </Form>

@@ -11,7 +11,7 @@ export default ({ glyph, size = 54, fontSize = 48, withPoints, withMetrix, ...re
     glyph.draw(ctx, x, y, fontSize);
     if (withPoints) glyph.drawPoints(ctx, x, y, fontSize);
     if (withMetrix) glyph.drawMetrics(ctx, x, y, fontSize);
-  }, []);
+  }, [glyph, x, y, fontSize, withPoints, withMetrix]);
 
   return (
     <canvas ref={canvasRef} width={size} height={size} title={`${glyph.unicode} "${glyph.name}"`} {...rest} />

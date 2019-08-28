@@ -88,6 +88,8 @@ export default () => {
 
   const addAndSaveGlyphsFromCode = useCallback((e) => {
     e.preventDefault();
+
+    // eslint-disable-next-line no-eval
     const glyphsToAdd = eval(e.target.code.value);
     if (!glyphsToAdd.length) {
       return;
