@@ -13,64 +13,8 @@ import axios from "axios";
 import { DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME, API_URLS } from '../constants';
 import DownloadFontForm from './DownloadFontForm';
 import GlyphAddingForm from './GlyphAddingForm';
+import SavedGlyphs from './SavedGlyphs';
 import Glyph from './Glyph';
-
-const notdefPath = new opentype.Path();
-notdefPath.moveTo(100, 0);
-notdefPath.lineTo(100, 700);
-notdefPath.lineTo(600, 700);
-notdefPath.lineTo(600, 0);
-notdefPath.moveTo(200, 100);
-notdefPath.lineTo(500, 100);
-notdefPath.lineTo(500, 600);
-notdefPath.lineTo(200, 600);
-const notdefGlyph = new opentype.Glyph({
-  name: '.notdef',
-  unicode: 0,
-  advanceWidth: 650,
-  path: notdefPath
-});
-
-const aPath = new opentype.Path();
-aPath.moveTo(100, 0);
-aPath.lineTo(100, 700);
-aPath.lineTo(600, 700);
-aPath.lineTo(600, 0);
-aPath.lineTo(500, 0);
-aPath.lineTo(500, 300);
-aPath.lineTo(200, 300);
-aPath.lineTo(200, 0);
-aPath.moveTo(200, 400);
-aPath.lineTo(500, 400);
-aPath.lineTo(500, 600);
-aPath.lineTo(200, 600);
-const aGlyph = new opentype.Glyph({
-  name: 'A',
-  unicode: 65,
-  advanceWidth: 650,
-  path: aPath
-});
-const bPath = new opentype.Path();
-bPath.moveTo(100, 0);
-bPath.lineTo(100, 700);
-bPath.lineTo(500, 700);
-bPath.lineTo(500, 400);
-bPath.lineTo(600, 400);
-bPath.lineTo(600, 0);
-bPath.moveTo(200, 400);
-bPath.lineTo(400, 400);
-bPath.lineTo(400, 600);
-bPath.lineTo(200, 600);
-bPath.moveTo(200, 100);
-bPath.lineTo(500, 100);
-bPath.lineTo(500, 300);
-bPath.lineTo(200, 300);
-const bGlyph = new opentype.Glyph({
-  name: 'B',
-  unicode: 66,
-  advanceWidth: 650,
-  path: bPath
-});
 
 const mergeGlyphs = (glyphs, glyphsToAdd) => {
   const resultGlyphs = [...glyphs];
@@ -89,7 +33,7 @@ const mergeGlyphs = (glyphs, glyphsToAdd) => {
     resultGlyphs[existedGlyphIndex] = glyphToAdd;
   });
 
-  return resultGlyphs;
+  return resultGlyphs.sort((a, b) => (a.unicode || 0) - (b.unicode || 0));
 };
 
 const saveGlyph = (glyph) =>
@@ -138,9 +82,9 @@ const convertAndDownloadFont = (openTypeFont, type, filename) => {
 
 
 export default () => {
-  const [glyphs, setGlyphs] = useState([notdefGlyph, aGlyph, bGlyph]);
+  const [glyphs, setGlyphs] = useState([]);
 
-  const addAndSaveGlyphs = useCallback((e) => {
+  const addAndSaveGlyphsFromCode = useCallback((e) => {
     e.preventDefault();
     const glyphsToAdd = eval(e.target.code.value);
     if (!glyphsToAdd.length) {
@@ -149,6 +93,10 @@ export default () => {
 
     glyphsToAdd.forEach(saveGlyph);
     setGlyphs((glyphs) => mergeGlyphs(glyphs, glyphsToAdd));
+  }, []);
+
+  const addGlyph = useCallback((glyph) => {
+    setGlyphs((glyphs) => mergeGlyphs(glyphs, [glyph]));
   }, []);
 
   const downloadFont = useCallback((e) => {
@@ -188,12 +136,12 @@ export default () => {
           <Card className="mb-5">
             <CardBody>
               {glyphs.map((glyph) => (
-                <Glyph key={glyph.unicode || glyph.name} glyph={console.log(glyph) || glyph} />
+                <Glyph key={(glyph.unicode || glyph.name) + glyph.path.toPathData()} glyph={glyph} />
               ))}
             </CardBody>
           </Card>
 
-          <GlyphAddingForm onSubmit={addAndSaveGlyphs}/>
+          <GlyphAddingForm onSubmit={addAndSaveGlyphsFromCode}/>
 
         </Col>
         <Col xs={6}>
@@ -201,6 +149,7 @@ export default () => {
             Saved glyphs:
           </h4>
 
+          <SavedGlyphs onGlyphClick={addGlyph} />
         </Col>
       </Row>
     </Container>
