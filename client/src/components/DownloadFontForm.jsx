@@ -6,7 +6,9 @@ import {
   FormGroup,
   Input,
 } from 'reactstrap';
+
 import { FONT_OUTPUT_FORMATS, DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME } from '../constants';
+
 
 const DownloadFontForm = ({ onSubmit }) => (
   <Form className="p-3" inline onSubmit={onSubmit}>

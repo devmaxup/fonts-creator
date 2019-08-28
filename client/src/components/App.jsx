@@ -1,82 +1,15 @@
-import React, { useState, useCallback } from 'react';
-import {
-  Col,
-  Container,
-  Row,
-  Card,
-  CardBody,
-} from 'reactstrap';
-import * as opentype from 'opentype.js';
-import { Font as FontEditorFont } from 'fonteditor-core';
-import axios from 'axios';
+import React, { useCallback, useState } from 'react';
+import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 
-import { DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME, API_URLS } from '../constants';
 import DownloadFontForm from './DownloadFontForm';
 import GlyphAddingForm from './GlyphAddingForm';
 import SavedGlyphs from './SavedGlyphs';
 import Glyph from './Glyph';
 
-const mergeGlyphs = (glyphs, glyphsToAdd) => {
-  const resultGlyphs = [...glyphs];
-
-  glyphsToAdd.forEach((glyphToAdd) => {
-    const existedGlyphIndex = glyphs.findIndex(
-      glyphToAdd.unicode
-        ? ({ unicode }) => unicode === glyphToAdd.unicode
-        : ({ name }) => name === glyphToAdd.name,
-    );
-
-    if (existedGlyphIndex === -1) {
-      resultGlyphs.push(glyphToAdd);
-      return;
-    }
-    resultGlyphs[existedGlyphIndex] = glyphToAdd;
-  });
-
-  return resultGlyphs.sort((a, b) => (a.unicode || 0) - (b.unicode || 0));
-};
-
-const saveGlyph = (glyph) => axios.post(API_URLS.GYPHS, {
-  name: glyph.name,
-  unicode: glyph.unicode,
-  advanceWidth: glyph.advanceWidth,
-  pathData: glyph.path.toPathData(),
-});
-
-const createFont = (glyphs, familyName, styleName) => new opentype.Font({
-  familyName,
-  styleName,
-  unitsPerEm: 1000,
-  ascender: 800,
-  descender: -200,
-  glyphs,
-});
-
-const convertAndDownloadFont = (openTypeFont, type, filename) => {
-  const font = FontEditorFont.create(openTypeFont.toArrayBuffer(), {
-    type: 'otf',
-    hinting: true, // save font hinting
-    compound2simple: true, // transform ttf compound glyph to simple
-    inflate: null, // inflate function for woff
-    combinePath: false, // for svg path
-  });
-
-  const resultArrayBuffer = font.write({
-    type, // support ttf, woff, eot, svg
-    hinting: true, // save font hinting
-    deflate: null, // deflate function for woff
-  });
-
-  const blob = new Blob([resultArrayBuffer]);
-  const a = document.createElement('a');
-  document.body.appendChild(a);
-
-  const url = window.URL.createObjectURL(blob);
-  a.href = url;
-  a.download = `${filename}.${type}`;
-  a.click();
-  window.URL.revokeObjectURL(url);
-};
+import { DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME } from '../constants';
+import { saveGlyph } from '../api';
+import { mergeGlyphs } from '../helpers/glyphs';
+import { convertAndDownloadFont, createFont } from '../helpers/fonts';
 
 
 const App = () => {

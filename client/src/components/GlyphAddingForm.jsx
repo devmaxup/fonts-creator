@@ -4,6 +4,7 @@ import {
   Button, Form, FormGroup, FormText, Label, Input,
 } from 'reactstrap';
 
+
 const GlyphAddingForm = ({ onSubmit }) => {
   const codeInputRef = useRef(null);
   const [isExampleVisible, setIsExampleVisibility] = useState(false);

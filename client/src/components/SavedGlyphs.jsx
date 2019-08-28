@@ -1,67 +1,16 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Card,
+  CardBody,
   Pagination,
   PaginationItem,
   PaginationLink,
-  Card,
-  CardBody,
 } from 'reactstrap';
-import * as opentype from 'opentype.js';
-import axios from 'axios';
 
-import { API_URLS } from '../constants';
 import Glyph from './Glyph';
-
-const fetchGlyphs = (page = 1) => axios.get(API_URLS.GYPHS, {
-  params: {
-    page,
-  },
-});
-
-const createGlyphFromPathData = (glyphData) => {
-  const path = new opentype.Path();
-  const pathDataList = glyphData.pathData
-    .replace(/([A-Z])/g, ';$1')
-    .replace(/^;/, '')
-    .split(';');
-
-  pathDataList.forEach((pathData) => {
-    const command = pathData[0];
-    const args = pathData.slice(1).split(' ').map(parseFloat);
-
-    switch (command) {
-      case 'M':
-        path.moveTo(...args);
-        return;
-      case 'L':
-        path.lineTo(...args);
-        break;
-      case 'Q':
-        path.quadTo(...args);
-        break;
-      case 'C':
-        path.curveTo(...args);
-        break;
-      case 'Z':
-        path.close(...args);
-        break;
-      default:
-        throw new Error(`Unexpected path command ${pathData}`);
-    }
-  });
-
-
-  const glyph = new opentype.Glyph({
-    name: glyphData.name,
-    unicode: glyphData.unicode,
-    advanceWidth: glyphData.advanceWidth || 650,
-    path,
-  });
-  glyph._id = glyphData.id;
-
-  return glyph;
-};
+import { fetchGlyphs } from '../api';
+import { createGlyphFromPathData } from '../helpers/glyphs';
 
 
 const SavedGlyphs = ({ onGlyphClick }) => {
