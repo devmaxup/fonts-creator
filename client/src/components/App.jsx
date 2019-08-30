@@ -1,20 +1,22 @@
 import React, { useCallback, useState } from 'react';
-import { Card, CardBody, Col, Container, Row } from 'reactstrap';
+import { Card, CardBody, Col, Container, Row, Modal } from 'reactstrap';
 
 import DownloadFontForm from './DownloadFontForm';
 import GlyphAddingForm from './GlyphAddingForm';
+import AddSavedGlyphForm from './AddSavedGlyphForm';
 import SavedGlyphs from './SavedGlyphs';
 import Glyph from './Glyph';
 
 import { DEFAULT_FONT_NAME, DEFAULT_STYLE_NAME } from '../constants';
 import { saveGlyph } from '../api';
-import { mergeGlyphs } from '../helpers/glyphs';
+import { mergeGlyphs, extendGlyph } from '../helpers/glyphs';
 import { convertAndDownloadFont, createFont } from '../helpers/fonts';
 
 
 const App = () => {
   const [savedGlyphsVersion, setSavedGlyphsVersion] = useState(0);
   const [glyphs, setGlyphs] = useState([]);
+  const [glyphToAdd, setGlyphToAdd] = useState(null);
 
   const addAndSaveGlyphsFromCode = useCallback((e) => {
     e.preventDefault();
@@ -33,9 +35,22 @@ const App = () => {
     setGlyphs((currentGlyphs) => mergeGlyphs(currentGlyphs, glyphsToAdd));
   }, []);
 
-  const addGlyph = useCallback((glyph) => {
-    setGlyphs((currentGlyphs) => mergeGlyphs(currentGlyphs, [glyph]));
+  const showAddGlyphModal = useCallback((glyph) => {
+    setGlyphToAdd(glyph);
   }, []);
+
+  const addGlyph = useCallback((e) => {
+
+    const glyphOverrideOptions = {
+      name: e.target.name.value,
+      unicode: e.target.unicode.value,
+      advanceWidth: e.target.advanceWidth.value,
+    };
+    const glyph = extendGlyph(glyphToAdd, glyphOverrideOptions);
+
+    setGlyphToAdd(null);
+    setGlyphs((currentGlyphs) => mergeGlyphs(currentGlyphs, [glyph]));
+  }, [glyphToAdd]);
 
   const downloadFont = useCallback((e) => {
     e.preventDefault();
@@ -55,6 +70,9 @@ const App = () => {
     convertAndDownloadFont(font, outputFormat, filename);
   }, [glyphs]);
 
+  const closeAddGlyphModal = useCallback(() => {
+    setGlyphToAdd(null);
+  }, []);
 
   return (
     <Container className="mt-5 mb-5">
@@ -92,9 +110,13 @@ const App = () => {
             Saved glyphs:
           </h4>
 
-          <SavedGlyphs key={savedGlyphsVersion} onGlyphClick={addGlyph} />
+          <SavedGlyphs key={savedGlyphsVersion} onGlyphClick={showAddGlyphModal} />
         </Col>
       </Row>
+
+      <Modal isOpen={!!glyphToAdd} toggle={closeAddGlyphModal}>
+        {glyphToAdd && <AddSavedGlyphForm glyph={glyphToAdd} onSubmit={addGlyph} onCancelClick={closeAddGlyphModal} />}
+      </Modal>
     </Container>
   );
 };

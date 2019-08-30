@@ -1,6 +1,13 @@
 import * as opentype from '../../node_modules/opentype.js/src/opentype';
 
-export const createGlyphFromPathData = (glyphData) => {
+export const toGlyphData = (glyph) => ({
+  name: glyph.name,
+  unicode: glyph.unicode,
+  advanceWidth: glyph.advanceWidth,
+  pathData: glyph.path.toPathData(),
+});
+
+export const createGlyphFromGlyphData = (glyphData) => {
   const path = new opentype.Path();
   const pathDataList = glyphData.pathData
     .replace(/([A-Z])/g, ';$1')
@@ -64,3 +71,9 @@ export const mergeGlyphs = (glyphs, glyphsToAdd) => {
   return resultGlyphs.sort((a, b) => (a.unicode || 0) - (b.unicode || 0));
 };
 
+export const extendGlyph = (glyph, options) =>
+  createGlyphFromGlyphData({
+    ...toGlyphData(glyph),
+    ...options,
+    id: glyph._id
+  });

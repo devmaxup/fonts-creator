@@ -10,7 +10,7 @@ import {
 
 import Glyph from './Glyph';
 import { fetchGlyphs } from '../api';
-import { createGlyphFromPathData } from '../helpers/glyphs';
+import { createGlyphFromGlyphData } from '../helpers/glyphs';
 
 
 const SavedGlyphs = ({ onGlyphClick }) => {
@@ -34,7 +34,7 @@ const SavedGlyphs = ({ onGlyphClick }) => {
   useEffect(() => {
     fetchGlyphs(page)
       .then((response) => {
-        const newGlyphs = response.data.data.docs.map(createGlyphFromPathData);
+        const newGlyphs = response.data.data.docs.map(createGlyphFromGlyphData);
         setGlyphs(newGlyphs);
         setTotalPages(response.data.data.pages);
       });
