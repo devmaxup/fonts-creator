@@ -16,7 +16,7 @@ export const createGlyphFromGlyphData = (glyphData) => {
 
   pathDataList.forEach((pathData) => {
     const command = pathData[0];
-    const args = pathData.slice(1).split(' ').map(parseFloat);
+    const args = pathData.slice(1).replace(/-/g, ' -').split(' ').map(parseFloat);
 
     switch (command) {
       case 'M':
