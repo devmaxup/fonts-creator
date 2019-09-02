@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { Card, CardBody, Col, Container, Row, Modal } from 'reactstrap';
+import {
+  Card, CardBody, Col, Container, Row, Modal,
+} from 'reactstrap';
 
 import DownloadFontForm from './DownloadFontForm';
 import GlyphAddingForm from './GlyphAddingForm';
@@ -40,7 +42,6 @@ const App = () => {
   }, []);
 
   const addGlyph = useCallback((e) => {
-
     const glyphOverrideOptions = {
       name: e.target.name.value,
       unicode: e.target.unicode.value,
@@ -110,12 +111,21 @@ const App = () => {
             Saved glyphs:
           </h4>
 
-          <SavedGlyphs key={savedGlyphsVersion} onGlyphClick={showAddGlyphModal} />
+          <SavedGlyphs
+            key={savedGlyphsVersion}
+            onGlyphClick={showAddGlyphModal}
+          />
         </Col>
       </Row>
 
       <Modal isOpen={!!glyphToAdd} toggle={closeAddGlyphModal}>
-        {glyphToAdd && <AddSavedGlyphForm glyph={glyphToAdd} onSubmit={addGlyph} onCancelClick={closeAddGlyphModal} />}
+        {glyphToAdd && (
+          <AddSavedGlyphForm
+            glyph={glyphToAdd}
+            onSubmit={addGlyph}
+            onCancelClick={closeAddGlyphModal}
+          />
+        )}
       </Modal>
     </Container>
   );

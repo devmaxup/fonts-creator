@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as opentype from "opentype.js";
+import * as opentype from 'opentype.js';
 
 import App from './components/App';
 

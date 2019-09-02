@@ -71,9 +71,8 @@ export const mergeGlyphs = (glyphs, glyphsToAdd) => {
   return resultGlyphs.sort((a, b) => (a.unicode || 0) - (b.unicode || 0));
 };
 
-export const extendGlyph = (glyph, options) =>
-  createGlyphFromGlyphData({
-    ...toGlyphData(glyph),
-    ...options,
-    id: glyph._id
-  });
+export const extendGlyph = (glyph, options) => createGlyphFromGlyphData({
+  ...toGlyphData(glyph),
+  ...options,
+  id: glyph._id,
+});

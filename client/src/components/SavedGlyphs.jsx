@@ -55,13 +55,19 @@ const SavedGlyphs = ({ onGlyphClick }) => {
           <PaginationItem disabled={page === 1}>
             <PaginationLink onClick={changePage} data-page={1} first />
           </PaginationItem>
-          {(new Array(totalPages)).fill(null).map((nothing, index) => (
-            <PaginationItem key={index} active={page === index + 1}>
-              <PaginationLink onClick={changePage} data-page={index + 1}>
-                {index + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
+          {(new Array(totalPages))
+            .fill(null)
+            .map((nothing, index) => index + 1)
+            .map((pageNumber) => (
+              <PaginationItem
+                key={`${totalPages}-${pageNumber}`}
+                active={page === pageNumber}
+              >
+                <PaginationLink onClick={changePage} data-page={pageNumber}>
+                  {pageNumber}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
           <PaginationItem disabled={page === totalPages}>
             <PaginationLink onClick={changePage} data-page={totalPages} last />
           </PaginationItem>

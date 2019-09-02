@@ -14,7 +14,8 @@
     "rules": {
       "import/prefer-default-export": 0,
       "no-param-reassign": 0,
-      "no-underscore-dangle": 0
+      "no-underscore-dangle": 0,
+      "func-names": 0
     },
     "extends": [
       "eslint:recommended",
