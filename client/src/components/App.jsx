@@ -35,6 +35,8 @@ const App = () => {
       .then(() => setSavedGlyphsVersion((version) => version + 1));
 
     setGlyphs((currentGlyphs) => mergeGlyphs(currentGlyphs, glyphsToAdd));
+
+    console.log("Glyphs Added: ", glyphsToAdd);
   }, []);
 
   const showAddGlyphModal = useCallback((glyph) => {
